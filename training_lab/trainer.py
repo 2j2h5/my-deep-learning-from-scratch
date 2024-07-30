@@ -1,3 +1,4 @@
+from alexnet import AlexNet
 from simple_conv_net import SimpleConvNet
 from lenet import LeNet5
 import torch
@@ -7,32 +8,33 @@ from torchvision.datasets.mnist import MNIST
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 
-""" transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))])
+transform = {
+    'SimpleConvNet': transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize((0.1307,), (0.3081,))
+    ]),
+    'LeNet5': transforms.Compose([
+        transforms.Resize((32, 32)),
+        transforms.ToTensor()
+    ]),
+    'AlexNet': transforms.Compose([
+        transforms.Resize((227, 227)),
+        transforms.Grayscale(num_output_channels=3),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+    ])
+}
 
-data_train = MNIST('.', train=True, download=True, transform=transform)
-data_test = MNIST('.', train=False, download=True, transform=transform)
+data_train = MNIST('.', train=True, download=True, transform=transform['AlexNet'])
+data_test = MNIST('.', train=False, download=True, transform=transform['AlexNet'])
 
-data_train_loader = DataLoader(data_train, batch_size=100, shuffle=True)
-data_test_loader = DataLoader(data_test, batch_size=100, shuffle=False) """
-
-data_train = MNIST('.',
-                train=True,
-                download=True,
-                transform=transforms.Compose([
-                    transforms.Resize((32, 32)),
-                    transforms.ToTensor()]))
-data_test = MNIST('.',
-                train=False,
-                download=True,
-                transform=transforms.Compose([
-                    transforms.Resize((32, 32)),
-                    transforms.ToTensor()]))
 data_train_loader = DataLoader(data_train, batch_size=100, shuffle=True)
 data_test_loader = DataLoader(data_test, batch_size=100, shuffle=False)
 
-net = LeNet5()
+net = AlexNet()
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(f'Use {device}')
 net.to(device)
 
 criterion = nn.CrossEntropyLoss()
@@ -68,6 +70,7 @@ def test(net, device, data_test_loader):
     test_loss /= len(data_test_loader.dataset)
     print(f'\nTest set: Average loss: {test_loss:.4f}, Accuracy: {total_correct}/{len(data_test_loader.dataset)} ({100. * total_correct / len(data_test_loader.dataset):.0f}%)\n')
 
+torch.autograd.set_detect_anomaly(True)
 for epoch in range(1, 21):
     train(net, device, data_train_loader, optimizer, epoch)
     test(net, device, data_test_loader)
