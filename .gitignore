@@ -1,0 +1,6 @@
+# Ignore all __pycache__ directories
+**/__pycache__/
+
+# Ignore training-lab/data directory
+training-lab/data/
+training_lab/data/
