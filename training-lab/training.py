@@ -1,6 +1,7 @@
 from alexnet import AlexNet 
 from simple_conv_net import SimpleConvNet, SimpleConvNet_CIFAR10
 from lenet import LeNet5, LeNet5_CIFAR10
+from vggnet import VGG16_CIFAR10
 from preprocessor import Preprocessor
 from trainer import Trainer
 import torch
@@ -11,11 +12,11 @@ import matplotlib.pyplot as plt
 
 LEARNING_RATE = 0.001
 BATCH_SIZE = 256
-NUM_EPOCHS = 20
+NUM_EPOCHS = 30
 
-net = LeNet5()
+net = VGG16_CIFAR10()
 preprocessor = Preprocessor(net, BATCH_SIZE)
-data_train, data_test, data_train_loader, data_test_loader = preprocessor.get_data('MNIST')
+data_train, data_test, data_train_loader, data_test_loader = preprocessor.get_data('CIFAR10')
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 net.to(device)
 

@@ -1,6 +1,7 @@
 from alexnet import AlexNet
 from simple_conv_net import SimpleConvNet, SimpleConvNet_CIFAR10
 from lenet import LeNet5, LeNet5_CIFAR10
+from vggnet import VGG16_CIFAR10
 from torchvision import datasets
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
@@ -11,7 +12,7 @@ class Preprocessor:
         self.batch_size = batch_size
 
     def _get_transform(self, model):
-        if isinstance(model, (SimpleConvNet, SimpleConvNet_CIFAR10, LeNet5_CIFAR10)):
+        if isinstance(model, (SimpleConvNet, SimpleConvNet_CIFAR10, LeNet5_CIFAR10, VGG16_CIFAR10)):
             return transforms.Compose([
                 transforms.ToTensor(),
                 transforms.Normalize((0.1307,), (0.3081,))
