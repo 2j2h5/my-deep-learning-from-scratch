@@ -19,6 +19,9 @@ class Trainer:
         total_correct = 0
         total_loss = 0.0
 
+        current_lr = self.optimizer.param_groups[0]['lr']
+        print(f"Epoch {step}: Learning Rate: {current_lr:.6f}")
+
         for batch_index, (images, labels) in enumerate(self.data_train_loader):
             images, labels = images.to(self.device), labels.to(self.device)
             self.optimizer.zero_grad()

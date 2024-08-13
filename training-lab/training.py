@@ -27,7 +27,7 @@ net.to(device)
 print(f'Using {device}')
 
 optimizer = optim.SGD(net.parameters(), LEARNING_RATE, momentum=MOMENTUM, weight_decay=WEIGHT_DECAY)
-lr_scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=3, verbose=True)
+lr_scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=3, threshold=1e-4, verbose=True)
 criterion = nn.CrossEntropyLoss()
 
 trainer = Trainer(net, device, data_train_loader, data_test_loader, optimizer, lr_scheduler, criterion, NUM_EPOCHS)
