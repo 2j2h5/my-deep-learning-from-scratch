@@ -1,12 +1,13 @@
 import torch
 
 class Trainer:
-    def __init__(self, network, device, data_train_loader, data_test_loader, optimizer, criterion, epoch):
+    def __init__(self, network, device, data_train_loader, data_test_loader, optimizer, lr_scheduler, criterion, epoch):
         self.network = network
         self.device = device
         self.data_train_loader = data_train_loader
         self.data_test_loader = data_test_loader
         self.optimizer = optimizer
+        self.lr_scheduler = lr_scheduler
         self.criterion = criterion
         self.epoch = epoch
 
@@ -57,10 +58,13 @@ class Trainer:
         self.test_acc_list.append(accuracy)
         print(f'Test set: Average loss: {test_loss:.4f}, Accuracy: {total_correct}/{len(self.data_test_loader.dataset)} ({100. * accuracy:.0f}%)\n')
 
+        return test_loss
+
     def train(self):
         for step in range(1, self.epoch+1):
             self.train_step(step)
-            self.test_step()
+            test_loss = self.test_step()
+            self.lr_scheduler.step(test_loss)
 
     def get_acc_list(self):
         return self.train_acc_list, self.test_acc_list
