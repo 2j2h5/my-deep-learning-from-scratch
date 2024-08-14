@@ -5,6 +5,10 @@ import torch.nn.init as init
 
 from torch.autograd import Variable
 
+__all__ = ['ResNet', 'resnet20', 'resnet32', 'plain20', 'plain32']
+
+OPTION = 'A'
+
 def _weights_init(m):
     classname = m.__class__.__name__
     #print(classname)
@@ -22,7 +26,7 @@ class LambdaLayer(nn.Module):
 class BasicBlock(nn.Module):
     expansion = 1
 
-    def __init__(self, in_planes, planes, stride=1, option='A'):
+    def __init__(self, in_planes, planes, stride=1, option=OPTION):
         super(BasicBlock, self).__init__()
         self.conv1 = nn.Conv2d(in_planes, planes, kernel_size=3, stride=stride, padding=1, bias=False)
         self.bn1 = nn.BatchNorm2d(planes)
@@ -47,6 +51,22 @@ class BasicBlock(nn.Module):
         out = F.relu(self.bn1(self.conv1(x)))
         out = self.bn2(self.conv2(out))
         out += self.shortcut(x)
+        out = F.relu(out)
+        return out
+    
+class PlainBlock(nn.Module):
+    expansion = 1
+
+    def __init__(self, in_planes, planes, stride=1):
+        super(PlainBlock, self).__init__()
+        self.conv1 = nn.Conv2d(in_planes, planes, kernel_size=3, stride=stride, padding=1, bias=False)
+        self.bn1 = nn.BatchNorm2d(planes)
+        self.conv2 = nn.Conv2d(planes, planes, kernel_size=3, stride=1, padding=1, bias=False)
+        self.bn2 = nn.BatchNorm2d(planes)
+
+    def forward(self, x):
+        out = F.relu(self.bn1(self.conv1(x)))
+        out = self.bn2(self.conv2(out))
         out = F.relu(out)
         return out
     
@@ -82,6 +102,15 @@ class ResNet(nn.Module):
         out = out.view(out.size(0), -1)
         out = self.linear(out)
         return out
-    
+
+def resnet20():
+    return ResNet(BasicBlock, [3, 3, 3])
+
 def resnet32():
     return ResNet(BasicBlock, [5, 5, 5])
+
+def plain20():
+    return ResNet(PlainBlock, [3, 3, 3])
+
+def plain32():
+    return ResNet(PlainBlock, [5, 5, 5])

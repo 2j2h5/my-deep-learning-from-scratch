@@ -19,9 +19,6 @@ class Trainer:
         total_correct = 0
         total_loss = 0.0
 
-        current_lr = self.optimizer.param_groups[0]['lr']
-        print(f"Epoch {step}: Learning Rate: {current_lr:.6f}")
-
         for batch_index, (images, labels) in enumerate(self.data_train_loader):
             images, labels = images.to(self.device), labels.to(self.device)
             self.optimizer.zero_grad()
@@ -59,7 +56,7 @@ class Trainer:
         test_loss /= len(self.data_test_loader.dataset)
         accuracy = total_correct / len(self.data_test_loader.dataset)
         self.test_acc_list.append(accuracy)
-        print(f'Test set: Average loss: {test_loss:.4f}, Accuracy: {total_correct}/{len(self.data_test_loader.dataset)} ({100. * accuracy:.0f}%)\n')
+        print(f'Test set: Average loss: {test_loss:.4f}, Accuracy: {total_correct}/{len(self.data_test_loader.dataset)} ({100. * accuracy:.0f}%)')
 
         return test_loss
 
@@ -68,6 +65,8 @@ class Trainer:
             self.train_step(step)
             test_loss = self.test_step()
             self.lr_scheduler.step(test_loss)
+            current_lr = self.lr_scheduler.get_last_lr()[0]
+            print(f"Learning Rate: {current_lr:.6f}\n")
 
     def get_acc_list(self):
         return self.train_acc_list, self.test_acc_list

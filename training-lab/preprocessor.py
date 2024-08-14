@@ -13,7 +13,8 @@ class Preprocessor:
         self.batch_size = batch_size
 
     def _get_transform(self, model):
-        if isinstance(model, (SimpleConvNet, SimpleConvNet_CIFAR10, LeNet5_CIFAR10, VGG16_CIFAR10, ResNet)):            return transforms.Compose([
+        if isinstance(model, SimpleConvNet):
+            return transforms.Compose([
                 transforms.ToTensor(),
                 transforms.Normalize((0.1307,), (0.3081,))
             ])
@@ -29,6 +30,11 @@ class Preprocessor:
                 transforms.Grayscale(num_output_channels=3),
                 transforms.ToTensor(),
                 transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+            ])
+        elif isinstance(model, (SimpleConvNet_CIFAR10, LeNet5_CIFAR10, VGG16_CIFAR10, ResNet)):
+            return transforms.Compose([
+                transforms.ToTensor(),
+                transforms.Normalize(mean=[0.4914, 0.4822, 0.4465], std=[0.2470, 0.2435, 0.2616])
             ])
         else:
             raise ValueError("Unknown model")
