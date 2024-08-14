@@ -13,8 +13,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 LEARNING_RATE = 0.1
-BATCH_SIZE = 256
-NUM_EPOCHS = 30
+BATCH_SIZE = 128
+NUM_EPOCHS = 50
 MOMENTUM = 0.9
 WEIGHT_DECAY = 0.0001
 
@@ -27,7 +27,11 @@ net.to(device)
 print(f'Using {device}')
 
 optimizer = optim.SGD(net.parameters(), LEARNING_RATE, momentum=MOMENTUM, weight_decay=WEIGHT_DECAY)
-lr_scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=4, threshold=1e-4)
+#lr_scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=4, threshold=1e-4)
+
+iterations_per_epoch = 50000 // BATCH_SIZE
+milestones = [3200 // iterations_per_epoch, 4800 // iterations_per_epoch]
+lr_scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=milestones, gamma=0.1)
 criterion = nn.CrossEntropyLoss()
 
 trainer = Trainer(net, device, data_train_loader, data_test_loader, optimizer, lr_scheduler, criterion, NUM_EPOCHS)

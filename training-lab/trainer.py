@@ -1,4 +1,5 @@
 import torch
+import time
 
 class Trainer:
     def __init__(self, network, device, data_train_loader, data_test_loader, optimizer, lr_scheduler, criterion, epoch):
@@ -61,12 +62,16 @@ class Trainer:
         return test_loss
 
     def train(self):
+        start_time = time.time()
         for step in range(1, self.epoch+1):
             self.train_step(step)
-            test_loss = self.test_step()
-            self.lr_scheduler.step(test_loss)
+            self.test_step()
+            self.lr_scheduler.step()
             current_lr = self.lr_scheduler.get_last_lr()[0]
             print(f"Learning Rate: {current_lr:.6f}\n")
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        print(f"Total Training Time: {elapsed_time:.2f} seconds")
 
     def get_acc_list(self):
         return self.train_acc_list, self.test_acc_list

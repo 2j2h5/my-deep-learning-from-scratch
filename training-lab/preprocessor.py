@@ -9,7 +9,7 @@ from torch.utils.data import DataLoader
 
 class Preprocessor:
     def __init__(self, model, batch_size):
-        self.transform = self._get_transform(model)
+        self.train_transform, self.test_transform = self._get_transform(model)
         self.batch_size = batch_size
 
     def _get_transform(self, model):
@@ -31,11 +31,24 @@ class Preprocessor:
                 transforms.ToTensor(),
                 transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
             ])
-        elif isinstance(model, (SimpleConvNet_CIFAR10, LeNet5_CIFAR10, VGG16_CIFAR10, ResNet)):
+        elif isinstance(model, (SimpleConvNet_CIFAR10, LeNet5_CIFAR10, VGG16_CIFAR10)):
             return transforms.Compose([
                 transforms.ToTensor(),
                 transforms.Normalize(mean=[0.4914, 0.4822, 0.4465], std=[0.2470, 0.2435, 0.2616])
             ])
+        elif isinstance(model, ResNet):
+            train_transform = transforms.Compose([
+                transforms.Pad(4),
+                transforms.RandomCrop(32),
+                transforms.RandomHorizontalFlip(),
+                transforms.ToTensor(),
+                transforms.Normalize(mean=[0.4914, 0.4822, 0.4465], std=[0.2470, 0.2435, 0.2616])
+            ])
+            test_transform = transforms.Compose([
+                transforms.ToTensor(),
+                transforms.Normalize(mean=[0.4914, 0.4822, 0.4465], std=[0.2470, 0.2435, 0.2616])
+            ])
+            return train_transform, test_transform
         else:
             raise ValueError("Unknown model")
         
@@ -49,8 +62,8 @@ class Preprocessor:
         return data_train, data_test, data_train_loader, data_test_loader
     
     def _get_CIFAR10_data(self):
-        data_train = datasets.CIFAR10('data/CIFAR10', train=True, download=True, transform=self.transform)
-        data_test = datasets.CIFAR10('data/CIFAR10', train=False, download=True, transform=self.transform)
+        data_train = datasets.CIFAR10('data/CIFAR10', train=True, download=True, transform=self.train_transform)
+        data_test = datasets.CIFAR10('data/CIFAR10', train=False, download=True, transform=self.test_transform)
 
         data_train_loader = DataLoader(data_train, batch_size=self.batch_size, shuffle=True)
         data_test_loader = DataLoader(data_test, batch_size=self.batch_size, shuffle=False)
