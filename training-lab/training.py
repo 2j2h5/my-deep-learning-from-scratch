@@ -27,11 +27,12 @@ net.to(device)
 print(f'Using {device}')
 
 optimizer = optim.SGD(net.parameters(), LEARNING_RATE, momentum=MOMENTUM, weight_decay=WEIGHT_DECAY)
+#optimizer = optim.Adam(net.parameters(), LEARNING_RATE, weight_decay=WEIGHT_DECAY)
 #lr_scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=5, threshold=1e-4)
 
 iterations_per_epoch = 50000 // BATCH_SIZE #390
 milestones = [8000 // iterations_per_epoch, 12000 // iterations_per_epoch] # in paper 82, 123 epoch > 41, 61 epoch > 20, 30 epoch
-lr_scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=milestones, gamma=0.1)
+lr_scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=milestones, gamma=0.1)                                                                                          
 criterion = nn.CrossEntropyLoss()
 
 trainer = Trainer(net, device, data_train_loader, data_test_loader, optimizer, lr_scheduler, criterion, NUM_EPOCHS)
