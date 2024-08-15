@@ -5,7 +5,7 @@ import torch.nn.init as init
 
 from torch.autograd import Variable
 
-__all__ = ['ResNet', 'resnet20', 'resnet32', 'plain20', 'plain32']
+__all__ = ['ResNet', 'resnet20', 'resnet32', 'plain20', 'plain32', 'resnet110']
 
 OPTION = 'A'
 
@@ -114,3 +114,6 @@ def plain20():
 
 def plain32():
     return ResNet(PlainBlock, [5, 5, 5])
+
+def resnet110():
+    return ResNet(BasicBlock, [18, 18, 18])

@@ -14,11 +14,11 @@ import matplotlib.pyplot as plt
 
 LEARNING_RATE = 0.1
 BATCH_SIZE = 128
-NUM_EPOCHS = 50
+NUM_EPOCHS = 41
 MOMENTUM = 0.9
 WEIGHT_DECAY = 0.0001
 
-net = resnet20()
+net = resnet32()
 preprocessor = Preprocessor(net, BATCH_SIZE)
 data_train, data_test, data_train_loader, data_test_loader = preprocessor.get_data('CIFAR10')
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -27,10 +27,10 @@ net.to(device)
 print(f'Using {device}')
 
 optimizer = optim.SGD(net.parameters(), LEARNING_RATE, momentum=MOMENTUM, weight_decay=WEIGHT_DECAY)
-#lr_scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=4, threshold=1e-4)
+#lr_scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=5, threshold=1e-4)
 
-iterations_per_epoch = 50000 // BATCH_SIZE
-milestones = [3200 // iterations_per_epoch, 4800 // iterations_per_epoch]
+iterations_per_epoch = 50000 // BATCH_SIZE #390
+milestones = [8000 // iterations_per_epoch, 12000 // iterations_per_epoch] # in paper 82, 123 epoch > 41, 61 epoch > 20, 30 epoch
 lr_scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=milestones, gamma=0.1)
 criterion = nn.CrossEntropyLoss()
 

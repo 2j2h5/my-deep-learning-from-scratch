@@ -41,6 +41,7 @@ class Preprocessor:
                 transforms.Pad(4),
                 transforms.RandomCrop(32),
                 transforms.RandomHorizontalFlip(),
+                transforms.RandAugment(),
                 transforms.ToTensor(),
                 transforms.Normalize(mean=[0.4914, 0.4822, 0.4465], std=[0.2470, 0.2435, 0.2616])
             ])
